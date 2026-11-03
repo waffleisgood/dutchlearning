@@ -1,0 +1,45 @@
+<!doctype html><html><head><meta charset="utf-8"></head><body>
+<!-- 사이트의 모든 발음 문장을 모으는 도구 (tools/make_audio.py 가 사용) -->
+<div class="window"><div class="titlebar"><span id="wintitle"></span></div>
+<div class="toolbar-row"><div class="throbber"><img></div></div>
+<input id="loc"><button id="btn-back"></button><button id="btn-fwd"></button>
+<main class="viewport"><div class="page" id="page"></div></main>
+<div id="status"></div><div id="clock"></div></div>
+<pre id="out"></pre>
+<script src="../js/pixel.js"></script>
+<script src="../js/data-verbs.js"></script>
+<script src="../js/data-nouns.js"></script>
+<script src="../js/data-grammar.js"></script>
+<script src="../js/grammar-a.js"></script>
+<script src="../js/grammar-b.js"></script>
+<script src="../js/sentences-1.js"></script>
+<script src="../js/sentences-2.js"></script>
+<script>window.AUDIO_FILES = {};</script>
+<script src="../js/app.js"></script>
+<script>
+(function () {
+  var A = window.WafelApp, texts = {};
+  function add(t) { t = A.cleanSay(t); if (t && t !== "-" && t !== "—") texts[t] = 1; }
+  var routes = ["trainer", "home", "lessen", "oefenen", "woorden", "perfectum", "tijdmachine", "dehet", "fouten", "over"];
+  for (var i = 1; i <= 12; i++) routes.push("les/" + i);
+  VERBS.forEach(function (v) {
+    add(v.inf.replace("(zich) ", "")); add(v.presEx); add(v.perfEx);
+  });
+  [].concat(window.SENTENCES_1 || [], window.SENTENCES_2 || []).forEach(function (v) {
+    v.pairs.forEach(function (p) { add(p.pres); add(p.perf); add(p.fut); });
+  });
+  NOUNS.forEach(function (n) { add(n.noun); if (n.plural.length) add("de " + n.plural[0]); });
+  var k = 0;
+  function step() {
+    document.querySelectorAll("[data-say]").forEach(function (b) { add(b.getAttribute("data-say")); });
+    if (k >= routes.length) {
+      var out = Object.keys(texts).map(function (t) { return A.audioKey(t) + "\t" + t; });
+      document.getElementById("out").textContent = "BEGIN\n" + out.join("\n") + "\nEND";
+      return;
+    }
+    location.hash = "#" + routes[k++];
+    setTimeout(step, 400);
+  }
+  setTimeout(step, 300);
+})();
+</script></body></html>

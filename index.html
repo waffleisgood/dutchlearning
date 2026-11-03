@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wafel Navigator</title>
+  <meta name="description" content="와플과 함께 배우는 네덜란드어 — 90년대 웹 스타일 A1–A2 학습 사이트">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="desktop">
+    <div class="window" role="application">
+      <!-- title bar -->
+      <div class="titlebar">
+        <img data-sprite="waffleSmall" class="title-icon" alt="">
+        <span class="title-text" id="wintitle">Wafel Navigator</span>
+        <span class="tb-btns">
+          <button class="tb-btn" title="Minimize" aria-label="Minimize">_</button>
+          <button class="tb-btn" title="Maximize" aria-label="Maximize">□</button>
+          <button class="tb-btn" title="About" aria-label="About" data-about>×</button>
+        </span>
+      </div>
+
+      <!-- menu bar -->
+      <nav class="menubar">
+        <button data-go="#home"><u>F</u>ile</button>
+        <button data-go="#woorden"><u>E</u>dit</button>
+        <button data-go="#lessen"><u>V</u>iew</button>
+        <button data-go="#oefenen"><u>G</u>o</button>
+        <button data-go="#fouten"><u>B</u>ookmarks</button>
+        <button data-go="#perfectum"><u>O</u>ptions</button>
+        <button data-go="#over"><u>D</u>irectory</button>
+        <button data-about style="margin-left:auto"><u>H</u>elp</button>
+      </nav>
+
+      <!-- toolbar -->
+      <div class="toolbar-row">
+        <div class="toolbar">
+          <button class="tool" id="btn-back"><img data-sprite="back" alt="">Back</button>
+          <button class="tool" id="btn-fwd"><img data-sprite="forward" alt="">Forward</button>
+          <a class="tool" href="#home" data-route="home"><img data-sprite="home" alt="">Home</a>
+          <a class="tool" href="#lessen" data-route="lessen"><img data-sprite="book" alt="">Lessen</a>
+          <a class="tool" href="#woorden" data-route="woorden"><img data-sprite="list" alt="">Woorden</a>
+          <a class="tool" href="#dehet" data-route="dehet"><img data-sprite="flagNL" alt="">de/het</a>
+          <a class="tool" href="#tijdmachine" data-route="tijdmachine"><img data-sprite="clock" alt="">Tijd</a>
+          <a class="tool" href="#trainer" data-route="trainer"><img data-sprite="star" alt="">Trainer</a>
+          <a class="tool" href="#perfectum" data-route="perfectum"><img data-sprite="trophy" alt="">Quiz</a>
+          <a class="tool" href="#fouten" data-route="fouten"><img data-sprite="floppy" alt="">Fouten</a>
+        </div>
+        <div class="throbber" title="Wafel Navigator"><img data-sprite="waffle" alt=""></div>
+      </div>
+
+      <!-- location -->
+      <div class="location">
+        <label for="loc">Location:</label>
+        <input id="loc" type="text" spellcheck="false" value="http://www.korean-waffle.be/nl/">
+      </div>
+      <div class="dirbar">
+        <a class="btn" href="#home">What's New!</a>
+        <a class="btn" href="#oefenen">What's Cool!</a>
+        <a class="btn" href="#lessen">Handbook</a>
+        <a class="btn" href="#woorden">Net Search</a>
+        <a class="btn" href="#over">Net Directory</a>
+      </div>
+
+      <!-- content -->
+      <main class="viewport">
+        <div class="page" id="page"></div>
+      </main>
+
+      <!-- status bar -->
+      <div class="statusbar">
+        <div class="st-main" id="status">Document: Done</div>
+        <div class="st-extra">NL ⇄ KO</div>
+        <div id="clock">--:--</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/pixel.js"></script>
+  <script src="js/data-verbs.js"></script>
+  <script src="js/data-nouns.js"></script>
+  <script src="js/data-grammar.js"></script>
+  <script src="js/grammar-a.js"></script>
+  <script src="js/grammar-b.js"></script>
+  <script src="js/sentences-1.js"></script>
+  <script src="js/sentences-2.js"></script>
+  <script src="js/audio-manifest.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
