@@ -11,3 +11,13 @@
 발음 파일은 macOS에서 `python3 tools/make_audio.py`로 다시 만들 수 있어요.
 
 글꼴: 둥근모꼴 (DungGeunMo).
+
+## 로그인 · 피드백 (Firebase)
+- `js/cloud.js`: 구글/이메일 로그인, 학습 기록 동기화, 피드백 보내기·읽기
+- `js/firebase-config.js`: Firebase 설정값 (비어 있으면 이 기기에만 저장)
+- `firestore.rules`: 보안 규칙 (학습 기록은 본인만, 피드백 읽기는 관리자만)
+- 켜는 방법: `docs/firebase-setup.md`
+- 관리자 피드백함: `#admin`
+
+## 실생활 표현
+- `js/data-phrases.js`: 학교(학부모-선생님) · 마트 장보기 표현과 식료품 이름. 페이지는 `#leven`

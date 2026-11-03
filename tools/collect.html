@@ -14,19 +14,28 @@
 <script src="../js/grammar-b.js"></script>
 <script src="../js/sentences-1.js"></script>
 <script src="../js/sentences-2.js"></script>
+<script src="../js/data-phrases.js"></script>
 <script>window.AUDIO_FILES = {};</script>
 <script src="../js/app.js"></script>
 <script>
 (function () {
   var A = window.WafelApp, texts = {};
   function add(t) { t = A.cleanSay(t); if (t && t !== "-" && t !== "—") texts[t] = 1; }
-  var routes = ["trainer", "home", "lessen", "oefenen", "woorden", "perfectum", "tijdmachine", "dehet", "fouten", "over"];
+  var routes = ["trainer", "home", "lessen", "oefenen", "woorden", "perfectum", "tijdmachine", "dehet", "fouten", "over", "leven", "leven/school", "leven/winkel"];
   for (var i = 1; i <= 12; i++) routes.push("les/" + i);
   VERBS.forEach(function (v) {
     add(v.inf.replace("(zich) ", "")); add(v.presEx); add(v.perfEx);
   });
   [].concat(window.SENTENCES_1 || [], window.SENTENCES_2 || []).forEach(function (v) {
     v.pairs.forEach(function (p) { add(p.pres); add(p.perf); add(p.fut); });
+  });
+  var PH = window.PHRASES || {};
+  Object.keys(PH).forEach(function (k) {
+    var t = PH[k];
+    (t.terms || []).forEach(function (x) { add(x[0]); });
+    (t.foods || []).forEach(function (f) { add(f.art + " " + f.nl); });
+    (t.sections || []).forEach(function (s) { s.items.forEach(function (it) { add(it.nl); if (it.alt) add(it.alt); }); });
+    (t.dialogs || []).forEach(function (d) { d.lines.forEach(function (l) { add(l.nl); }); });
   });
   NOUNS.forEach(function (n) { add(n.noun); if (n.plural.length) add("de " + n.plural[0]); });
   var k = 0;

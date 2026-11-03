@@ -1,0 +1,32 @@
+rules_version = '2';
+// Wafel Nederlands — Firestore 보안 규칙
+// ADMIN_EMAIL 을 관리자(피드백을 읽을 사람)의 구글 계정 이메일로 바꿔서 Firebase 콘솔 > Firestore > 규칙 에 붙여 넣으세요.
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isAdmin() {
+      return request.auth != null
+        && request.auth.token.email == "ADMIN_EMAIL"
+        && request.auth.token.email_verified == true;
+    }
+
+    // 학습 기록: 본인만 읽고 쓸 수 있어요
+    match /users/{uid} {
+      allow read, write: if request.auth != null && request.auth.uid == uid;
+    }
+
+    // 피드백: 누구나 보낼 수 있지만, 읽기/수정/삭제는 관리자만
+    match /feedback/{id} {
+      allow create: if request.resource.data.keys().hasOnly(["title", "body", "createdAt", "uid", "email", "name", "page", "read"])
+        && request.resource.data.title is string
+        && request.resource.data.title.size() > 0 && request.resource.data.title.size() <= 100
+        && request.resource.data.body is string
+        && request.resource.data.body.size() > 0 && request.resource.data.body.size() <= 3000
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.read == false
+        && (request.resource.data.uid == null
+            || (request.auth != null && request.resource.data.uid == request.auth.uid));
+      allow read, update, delete: if isAdmin();
+    }
+  }
+}

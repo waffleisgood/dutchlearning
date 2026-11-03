@@ -558,8 +558,174 @@
     d.px(12, 4, "N"); d.px(13, 5, "N"); d.px(13, 6, "N"); d.px(14, 7, "N"); d.px(14, 8, "N"); d.px(13, 9, "N"); d.px(13, 10, "N"); d.px(12, 11, "N");
   });
 
+  /* ---------- groceries (실생활 표현: 마트) ---------- */
+  BASE.F = "#b7d96a"; // light green
+  BASE.I = "#c79a5b"; // potato skin
+  BASE.J = "#f4f0e6"; // off-white
+  BASE.Q = "#ffb000"; // orange
+  S.aardappel = make(16, 16, function (d) {
+    d.disc(6, 9, 4, "I"); d.disc(10, 8, 4, "I"); d.rect(5, 6, 6, 7, "I");
+    d.px(5, 8, "D"); d.px(9, 10, "D"); d.px(11, 7, "D"); d.px(7, 6, "Z"); d.px(8, 6, "Z"); d.outline();
+  });
+  S.prei = make(16, 16, function (d) {
+    d.line(2, 14, 9, 7, "J"); d.line(3, 14, 10, 7, "J"); d.line(2, 13, 9, 6, "J");
+    d.line(9, 7, 14, 2, "E"); d.line(10, 7, 15, 3, "E"); d.line(9, 6, 12, 1, "F"); d.line(10, 8, 15, 6, "E");
+    d.px(1, 15, "Z"); d.px(2, 15, "Z"); d.outline();
+  });
+  S.look = make(16, 16, function (d) {
+    d.disc(8, 10, 5, "J"); d.rect(7, 3, 3, 3, "J"); d.px(8, 2, "J");
+    d.line(6, 6, 5, 14, "L"); d.line(10, 6, 11, 14, "L"); d.line(8, 6, 8, 15, "L");
+    d.outline(); d.px(7, 1, "U"); d.px(9, 1, "U");
+  });
+  S.sinaasappel = make(16, 16, function (d) {
+    d.disc(8, 9, 6, "Q"); d.px(6, 6, "Y"); d.px(5, 7, "Y"); d.px(10, 12, "O"); d.px(12, 10, "O");
+    d.outline(); d.px(8, 2, "D"); d.px(9, 2, "E"); d.px(10, 1, "E"); d.px(11, 1, "E");
+  });
+  S.bloem = make(16, 16, function (d) {
+    d.rect(3, 3, 10, 12, "J"); d.rect(4, 2, 8, 1, "J"); d.rect(4, 7, 8, 5, "B");
+    d.disc(8, 9, 1, "Y"); d.px(6, 4, "L"); d.px(9, 4, "L"); d.outline();
+  });
+  S.yoghurt = make(16, 16, function (d) {
+    d.rect(3, 5, 10, 2, "W"); d.rect(4, 7, 8, 8, "W"); d.rect(3, 3, 10, 2, "L");
+    d.rect(4, 9, 8, 3, "P"); d.px(7, 10, "R"); d.px(8, 10, "R"); d.outline();
+  });
+  S.wortel = make(16, 16, function (d) {
+    d.line(3, 13, 10, 6, "O"); d.line(3, 12, 9, 6, "O"); d.line(4, 13, 10, 7, "O");
+    d.line(5, 12, 11, 6, "O"); d.line(5, 10, 9, 6, "O"); d.px(2, 14, "O");
+    d.px(6, 10, "D"); d.px(8, 9, "D"); d.outline();
+    d.line(11, 5, 13, 1, "E"); d.line(11, 5, 15, 3, "E"); d.line(11, 5, 12, 2, "F");
+  });
+  S.tomaat = make(16, 16, function (d) {
+    d.disc(8, 9, 6, "R"); d.px(5, 7, "W"); d.px(6, 6, "W"); d.outline();
+    d.rect(7, 3, 3, 1, "E"); d.px(6, 4, "E"); d.px(10, 4, "E"); d.px(8, 2, "E");
+  });
+  S.ui = make(16, 16, function (d) {
+    d.disc(8, 10, 5, "U"); d.rect(7, 4, 3, 2, "U"); d.line(6, 6, 6, 14, "D"); d.line(10, 6, 10, 14, "D");
+    d.px(5, 8, "Z"); d.outline(); d.px(8, 2, "E"); d.px(9, 1, "E");
+  });
+  S.banaan = make(16, 16, function (d) {
+    d.line(2, 6, 6, 11, "Y"); d.line(2, 7, 6, 12, "Y"); d.line(6, 11, 13, 11, "Y"); d.line(6, 12, 13, 12, "Y");
+    d.line(3, 6, 7, 10, "Y"); d.line(7, 10, 13, 10, "Y"); d.line(13, 10, 14, 8, "Y");
+    d.outline(); d.px(1, 5, "D"); d.px(14, 7, "D");
+  });
+  S.melk = make(16, 16, function (d) {
+    d.rect(4, 5, 8, 10, "W"); d.line(4, 5, 8, 1, "W"); d.line(11, 5, 8, 2, "W"); d.rect(6, 2, 4, 3, "W");
+    d.rect(4, 9, 8, 3, "V"); d.outline(); d.rect(7, 0, 2, 1, "R");
+  });
+  S.ei = make(16, 16, function (d) {
+    d.disc(8, 9, 5, "J"); d.rect(6, 3, 4, 2, "J"); d.px(6, 6, "W"); d.px(6, 7, "W"); d.outline();
+  });
+  S.kaas = make(16, 16, function (d) {
+    for (var y = 5; y <= 12; y++) d.rect(2 + Math.max(0, 12 - y) - 0, y, 13 - Math.max(0, 12 - y), 1, "Y");
+    d.rect(2, 9, 13, 4, "Y"); d.disc(6, 11, 1, "Q"); d.px(11, 10, "Q"); d.px(12, 8, "Q"); d.outline();
+  });
+  S.rijst = make(16, 16, function (d) {
+    d.rect(2, 9, 12, 4, "B"); d.rect(3, 13, 10, 1, "B"); d.disc(8, 8, 5, "W"); d.rect(2, 9, 12, 4, "B");
+    d.px(5, 6, "L"); d.px(9, 5, "L"); d.px(11, 7, "L"); d.rect(4, 10, 8, 1, "W"); d.outline();
+  });
+  BASE.X = "#7b3fa0"; // purple
+  S.komkommer = make(16, 16, function (d) {
+    d.line(2, 12, 12, 3, "E"); d.line(3, 12, 13, 3, "E"); d.line(3, 13, 13, 4, "E"); d.line(2, 11, 11, 3, "E");
+    d.px(5, 10, "F"); d.px(8, 7, "F"); d.px(11, 5, "F"); d.outline();
+  });
+  S.paprika = make(16, 16, function (d) {
+    d.disc(6, 10, 4, "R"); d.disc(10, 10, 4, "R"); d.rect(5, 6, 6, 8, "R"); d.px(5, 8, "W"); d.outline();
+    d.rect(7, 3, 2, 3, "E"); d.px(9, 3, "E");
+  });
+  S.sla = make(16, 16, function (d) {
+    d.disc(8, 9, 6, "F"); d.disc(8, 10, 4, "E"); d.line(8, 6, 8, 14, "F"); d.line(5, 8, 8, 12, "F"); d.line(11, 8, 8, 12, "F"); d.outline();
+  });
+  S.champignon = make(16, 16, function (d) {
+    d.disc(8, 7, 6, "J"); d.rect(1, 8, 15, 6, "."); d.rect(2, 7, 13, 1, "J"); d.rect(6, 8, 4, 6, "Z");
+    d.px(5, 4, "L"); d.px(10, 5, "L"); d.outline();
+  });
+  S.citroen = make(16, 16, function (d) {
+    d.disc(8, 8, 5, "Y"); d.rect(2, 7, 12, 3, "Y"); d.px(1, 8, "Y"); d.px(14, 8, "Y"); d.px(6, 6, "W"); d.outline();
+  });
+  S.aardbei = make(16, 16, function (d) {
+    d.disc(8, 8, 5, "R"); for (var y = 9; y <= 14; y++) d.rect(3 + (y - 9), y, 11 - 2 * (y - 9), 1, "R");
+    [[6, 7], [10, 7], [8, 9], [6, 11], [10, 11], [8, 13]].forEach(function (p) { d.px(p[0], p[1], "Y"); });
+    d.outline(); d.rect(5, 2, 7, 2, "E"); d.px(8, 1, "E");
+  });
+  S.druif = make(16, 16, function (d) {
+    [[6, 5], [10, 5], [8, 8], [4, 8], [12, 8], [6, 11], [10, 11], [8, 14]].forEach(function (p) { d.disc(p[0], p[1], 2, "X"); });
+    d.px(5, 4, "P"); d.px(9, 7, "P"); d.outline(); d.line(8, 0, 8, 3, "D"); d.px(9, 1, "E"); d.px(10, 1, "E");
+  });
+  S.peer = make(16, 16, function (d) {
+    d.disc(8, 11, 4, "F"); d.disc(8, 6, 2, "F"); d.rect(6, 6, 5, 5, "F"); d.px(6, 10, "Y"); d.outline();
+    d.rect(8, 1, 1, 3, "D"); d.px(9, 2, "E"); d.px(10, 2, "E");
+  });
+  S.boter = make(16, 16, function (d) {
+    d.rect(2, 6, 12, 6, "Y"); d.rect(4, 4, 10, 2, "Z"); d.rect(2, 6, 12, 1, "Z"); d.outline(); d.rect(1, 13, 14, 1, "L");
+  });
+  S.kip = make(16, 16, function (d) {
+    d.disc(7, 7, 5, "U"); d.disc(9, 9, 4, "U"); d.line(11, 11, 14, 14, "J"); d.px(13, 13, "J"); d.px(15, 13, "J"); d.px(13, 15, "J");
+    d.px(5, 5, "Z"); d.px(6, 4, "Z"); d.outline();
+  });
+  S.vis = make(16, 16, function (d) {
+    d.disc(7, 8, 4, "V"); d.rect(4, 6, 7, 5, "V"); d.line(11, 8, 14, 5, "V"); d.line(11, 8, 14, 11, "V"); d.rect(13, 5, 1, 7, "V");
+    d.px(5, 7, "W"); d.outline(); d.px(5, 7, "K");
+  });
+    S.zalm = make(16, 16, function (d) {
+    d.rect(2, 6, 12, 5, "O"); d.line(2, 6, 13, 6, "P"); d.line(4, 8, 7, 10, "P"); d.line(8, 8, 11, 10, "P"); d.outline();
+  });
+  S.water = make(16, 16, function (d) {
+    d.rect(5, 5, 6, 10, "T"); d.rect(6, 2, 4, 3, "T"); d.rect(6, 1, 4, 1, "B"); d.rect(5, 8, 6, 3, "V"); d.outline();
+  });
+  S.thee = make(16, 16, function (d) {
+    d.rect(3, 6, 8, 7, "W"); d.rect(4, 6, 6, 1, "O");
+    [[11, 7], [12, 7], [13, 8], [13, 9], [12, 10], [11, 10]].forEach(function (p) { d.px(p[0], p[1], "W"); });
+    d.rect(1, 13, 12, 1, "L"); d.outline(); d.line(8, 2, 8, 6, "G"); d.rect(7, 2, 3, 2, "E");
+  });
+  S.ijs = make(16, 16, function (d) {
+    d.disc(8, 5, 4, "P"); for (var y = 8; y <= 15; y++) d.rect(4 + Math.floor((y - 8) / 2), y, 9 - 2 * Math.floor((y - 8) / 2), 1, "U");
+    d.px(6, 3, "W"); d.outline(); d.px(7, 10, "D"); d.px(9, 12, "D");
+  });
+  S.suiker = make(16, 16, function (d) {
+    d.rect(3, 3, 10, 12, "W"); d.rect(3, 6, 10, 4, "V"); d.px(6, 12, "L"); d.px(9, 13, "L"); d.outline();
+  });
+  S.zout = make(16, 16, function (d) {
+    d.rect(5, 6, 6, 9, "W"); d.disc(8, 5, 3, "L"); d.rect(5, 6, 6, 9, "W"); d.px(7, 3, "M"); d.px(9, 3, "M"); d.px(8, 4, "M"); d.outline();
+  });
+  S.olie = make(16, 16, function (d) {
+    d.rect(5, 6, 6, 9, "Y"); d.rect(7, 2, 2, 4, "Y"); d.rect(7, 1, 2, 1, "E"); d.rect(5, 9, 6, 3, "E"); d.outline();
+  });
+  S.sojasaus = make(16, 16, function (d) {
+    d.rect(5, 6, 6, 9, "M"); d.rect(7, 2, 2, 4, "M"); d.rect(6, 1, 4, 1, "R"); d.rect(5, 9, 6, 3, "R"); d.outline();
+  });
+  S.pasta = make(16, 16, function (d) {
+    d.rect(2, 9, 12, 4, "W"); d.rect(3, 13, 10, 1, "W"); d.disc(8, 8, 5, "Y");
+    d.line(4, 7, 12, 9, "S"); d.line(4, 9, 11, 6, "S"); d.rect(2, 9, 12, 4, "W"); d.rect(4, 10, 8, 1, "L"); d.outline();
+  });
+  S.noedels = S.pasta;
+  S.pistolet = make(16, 16, function (d) {
+    d.disc(8, 9, 5, "U"); d.line(8, 5, 8, 13, "Z"); d.outline();
+  });
+  S.chips = make(16, 16, function (d) {
+    d.rect(3, 2, 10, 13, "R"); d.rect(4, 1, 8, 1, "R"); d.disc(8, 9, 3, "Y"); d.rect(3, 4, 10, 1, "W"); d.outline();
+  });
+  S.kool = make(16, 16, function (d) {
+    d.disc(8, 9, 6, "F"); d.ring(8, 9, 4, "E"); d.ring(8, 9, 2, "E"); d.px(8, 9, "E"); d.outline();
+  });
+  S.spinazie = make(16, 16, function (d) {
+    d.disc(5, 7, 3, "E"); d.disc(11, 7, 3, "E"); d.disc(8, 5, 3, "E"); d.line(8, 8, 8, 15, "F"); d.line(5, 9, 8, 13, "F"); d.line(11, 9, 8, 13, "F"); d.outline();
+  });
+  S.room = make(16, 16, function (d) {
+    d.rect(4, 5, 8, 10, "W"); d.line(4, 5, 8, 2, "W"); d.line(11, 5, 8, 2, "W"); d.rect(5, 3, 6, 2, "W");
+    d.rect(4, 9, 8, 3, "P"); d.outline();
+  });
+  S.winkelkar = make(16, 16, function (d) {
+    d.rect(3, 4, 11, 6, "L"); for (var x = 4; x < 14; x += 3) d.rect(x, 4, 1, 6, "G");
+    d.line(0, 2, 3, 4, "M"); d.rect(3, 10, 10, 1, "M"); d.outline();
+    d.disc(5, 13, 1, "M"); d.disc(12, 13, 1, "M");
+  });
+  S.user = make(16, 16, function (d) {
+    d.disc(8, 5, 3, "A"); d.rect(3, 10, 10, 5, "B"); d.rect(4, 9, 8, 1, "B");
+    d.px(7, 5, "K"); d.px(9, 5, "K"); d.rect(5, 1, 6, 2, "H"); d.outline();
+  });
+
   // Korean-friendly aliases (picture names used in lesson data)
-  var ALIAS = { huis: "home", boek: "book", klok: "clock", ster: "star", potlood: "pencil", brief: "mail", wafel: "waffleSmall" };
+  var ALIAS = { huis: "home", boek: "book", klok: "clock", ster: "star", potlood: "pencil", brief: "mail", wafel: "waffleSmall", knoflook: "look" };
 
   /* ---------- Rendering ---------- */
   function mirror(rows) {

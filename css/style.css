@@ -737,3 +737,54 @@ details.beginner h3 { margin: 14px 0 6px; color: var(--waffle-dark); }
   .page { padding: 16px 16px 32px; }
   .statusbar .st-extra { display: none; }
 }
+
+/* ---------- 실생활 표현 ---------- */
+.ph-list { display: flex; flex-direction: column; gap: 2px; }
+.ph-row { display: flex; gap: 8px; align-items: flex-start; padding: 6px 4px; border-bottom: 1px dotted #a0a0a0; }
+.ph-row:last-child { border-bottom: 0; }
+.ph-row .say { flex: none; margin-top: 2px; }
+.ph-nl { font-size: 17px; }
+.ph-nl b { color: #c0392b; }
+.ph-ko { color: #333; }
+.toc { margin: 8px 0 12px; line-height: 1.8; }
+.cat-h { font-size: 15px; margin: 12px 0 4px; border-bottom: 1px solid #808080; }
+.pcard.food { width: 132px; }
+.pic-none { width: 48px; height: 48px; margin: 0 auto; border: 2px dashed #808080; display: grid; place-items: center; font-size: 22px; color: #808080; }
+.art-de { color: #2f5bd3; font-weight: bold; }
+.art-het { color: #d62828; font-weight: bold; }
+.dlg-box { margin: 8px 0 14px; padding: 8px; background: #fff; border: 2px inset #c0c0c0; }
+.dlg-title { font-weight: bold; margin-bottom: 6px; }
+.chat { display: flex; gap: 6px; margin: 6px 0; align-items: flex-start; }
+.chat.me { flex-direction: row-reverse; }
+.chat .who { flex: none; font-size: 12px; padding: 2px 4px; background: #000080; color: #fff; }
+.chat.me .who { background: #e07a1a; }
+.chat-b { max-width: 78%; padding: 6px 8px; background: #fffbea; border: 2px solid #000; }
+.chat.me .chat-b { background: #e8f0ff; }
+.q-sent { margin-top: 4px; font-size: 17px; }
+.leven-pick a img { width: 64px; height: 64px; }
+
+/* ---------- 로그인 · 피드백 ---------- */
+.dialog.wide { width: 440px; }
+.form-body { padding: 12px 14px; background: var(--gray); display: flex; flex-direction: column; gap: 8px; max-height: 80vh; overflow: auto; }
+.form-body .dlg-actions { padding: 6px 0 0; }
+.fld { display: flex; flex-direction: column; gap: 3px; }
+.fld input, .fld textarea { font: inherit; padding: 4px 6px; border: 2px inset #c0c0c0; background: #fff; width: 100%; box-sizing: border-box; }
+.fld textarea { resize: vertical; }
+.form-msg { min-height: 1.2em; font-size: 13px; }
+.form-msg.bad { color: #b00000; }
+.form-msg.ok { color: #006400; }
+.btn.google { display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; }
+.btn.google .g { font-weight: bold; color: #fff; background: #4285f4; padding: 0 6px; }
+.or { text-align: center; font-size: 12px; color: #555; border-bottom: 1px solid #808080; line-height: 0.1em; margin: 10px 0; }
+.or span { background: var(--gray); padding: 0 8px; }
+.mascot.small-m img { width: 56px; height: auto; }
+.tool.on { color: #000080; font-weight: bold; }
+.ico { width: 16px; height: 16px; vertical-align: -3px; }
+.fb-item { background: #fff; border: 2px solid #000; padding: 8px 10px; margin: 8px 0; }
+.fb-item.read { opacity: .7; }
+.fb-head { display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+.fb-body { white-space: pre-wrap; margin: 6px 0; }
+.fb-act { margin-top: 6px; }
+@media (max-width: 720px) { .dialog.wide { width: 100%; } .pcard.food { width: calc(50% - 8px); } }
+.dialog.wide { min-height: 0; }
+.fld[hidden] { display: none; }

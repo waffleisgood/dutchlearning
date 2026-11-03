@@ -40,7 +40,10 @@
 
   const store = {
     get(k, d) { try { const v = localStorage.getItem("wafel:" + k); return v == null ? d : JSON.parse(v); } catch (e) { return d; } },
-    set(k, v) { try { localStorage.setItem("wafel:" + k, JSON.stringify(v)); } catch (e) { /* ignore */ } }
+    set(k, v) {
+      try { localStorage.setItem("wafel:" + k, JSON.stringify(v)); } catch (e) { /* ignore */ }
+      if (k !== "visits") window.dispatchEvent(new CustomEvent("wafel:store", { detail: k }));
+    }
   };
 
   const sprite = (name, cls, alt) => `<img data-sprite="${name}" class="px ${cls || ""}" alt="${esc(alt || "")}">`;
@@ -333,7 +336,7 @@
         <div class="marquee"><span>
           ★ Perfectum 동사 ${VERBS.length}개 수록! &nbsp;&nbsp; ★ de/het 연습기 오픈 &nbsp;&nbsp;
           ★ 시간여행 시제 변환기: 현재 → 과거 → 완료 → 미래 &nbsp;&nbsp; ★ 문법 ${lessons.length || 12}개 레슨 + 채점 기능 &nbsp;&nbsp;
-          ★ NEW! 단어 트레이너로 동사 전부 정복하기 &nbsp;&nbsp; ★ 레슨마다 문제 30개 &nbsp;&nbsp; ★ Veel succes! 화이팅!
+          ★ NEW! 실생활 표현: 학교 · 마트 장보기 &nbsp;&nbsp; ★ NEW! 로그인하면 학습 기록 저장 &nbsp;&nbsp; ★ 단어 트레이너로 동사 전부 정복하기 &nbsp;&nbsp; ★ 레슨마다 문제 30개 &nbsp;&nbsp; ★ Veel succes! 화이팅!
         </span></div>
       </div>
 
@@ -353,6 +356,8 @@
         <a href="#les/4">단순과거</a>
         <a href="#les/5">현재완료</a>
         <a href="#les/6">미래</a>
+        <a href="#leven/school">학교 표현</a>
+        <a href="#leven/winkel">마트 표현</a>
         <a href="#over">About</a>
       </div>
 
@@ -1305,7 +1310,7 @@
   pages.fouten = function () {
     const list = Notebook.all();
     view().innerHTML = `
-      ${head("floppy", "Foutenboek", "오답노트 · 틀린 문제가 자동으로 저장돼요 (이 브라우저에만)")}
+      ${head("floppy", "Foutenboek", "오답노트 · 틀린 문제가 자동으로 저장돼요 (로그인하면 계정에도)")}
       ${list.length ? `
         <div class="actions">
           <button class="btn big primary" id="fb-quiz">오답 다시 풀기 (최대 10문제)</button>
@@ -1335,6 +1340,279 @@
     };
   };
 
+  /* =======================================================
+     실생활 표현 (학교 · 마트)  — data: js/data-phrases.js
+     ======================================================= */
+  const PH = () => window.PHRASES || {};
+  const phItems = (t) => [].concat(...((t.sections || []).map((s) => (s.items || []).map((it) => Object.assign({ sec: s.title }, it)))));
+
+  pages.leven = function (arg) {
+    const P = PH();
+    const t = P[arg];
+    if (!t) {
+      view().innerHTML = `
+        ${head("winkelkar", "Praktisch Nederlands", "실생활에서 바로 쓰는 표현")}
+        <div class="mascot">${sprite("waffleFace")}<div class="bubble">오늘 바로 쓸 수 있는 말을 모았어요. 장면을 골라 보세요!
+          모든 문장 옆 ${sprite("speaker", "ico")} 버튼을 누르면 네덜란드어 발음을 들을 수 있어요.</div></div>
+        <div class="triad leven-pick">
+          ${["school", "winkel"].filter((k) => P[k]).map((k) => `<a href="#leven/${k}">${sprite(k === "school" ? "jongen" : "winkelkar")}
+            <span class="big-word">${esc(P[k].nl)}</span><span class="tag">${esc(P[k].ko)} · 표현 ${phItems(P[k]).length}개${P[k].foods ? ` · 식료품 ${P[k].foods.length}개` : ""}</span></a>`).join("")}
+        </div>
+        ${Object.keys(P).length ? "" : `<p class="muted">표현 데이터를 불러오지 못했어요.</p>`}`;
+      Pixel.hydrate(view());
+      return;
+    }
+    const items = phItems(t);
+    const bests = store.get("leven-best", {});
+    const MODES = { listen: "듣고 뜻 고르기", pick: "알맞은 문장 고르기", gap: "빈칸 채우기" };
+    if (t.foods) MODES.food = "장보기 단어 쓰기";
+    const other = arg === "school" ? "winkel" : "school";
+    const foodCats = t.foods ? [...new Set(t.foods.map((f) => f.cat))] : [];
+    const foodPic = (f) => (f.pic && Pixel.has(f.pic) ? f.pic : Pixel.has(f.nl) ? f.nl : "");
+    const foodCard = (f) => `<div class="pcard food">${foodPic(f) ? sprite(foodPic(f), "pic") : `<div class="pic-none">${esc(f.nl.slice(0, 1))}</div>`}
+      <div><span class="nl"><span class="art-${f.art}">${esc(f.art)}</span> ${esc(f.nl)}</span> ${say(f.art + " " + f.nl)}</div>
+      <div class="small">${esc(f.ko)}</div>
+      <div class="small muted">${f.pl && f.pl !== "-" ? `여러 개: <span class="nl">${esc(f.pl)}</span>` : "보통 셀 수 없어요"}</div>
+      ${f.note ? `<div class="small muted">${esc(f.note)}</div>` : ""}</div>`;
+
+    view().innerHTML = `
+      ${head(t.emoji || "wafel", t.nl, t.ko + " · 실생활 표현")}
+      <div class="set-tabs"><a class="btn" href="#leven">← 장면 고르기</a><a class="btn" href="#leven/${other}">${esc((P[other] || {}).ko || "")} →</a></div>
+      <div class="mascot">${sprite("waffleFace")}<div class="bubble">${esc(t.easy || "")}</div></div>
+      ${(t.intro || []).length ? `<ul class="rule-list">${t.intro.map((x) => `<li>${fmt(x)}</li>`).join("")}</ul>` : ""}
+      ${(t.terms || []).length ? `<div class="groupbox"><span class="legend">${sprite("book", "ico-s")} 먼저 알아둘 말</span>
+        <dl class="terms">${t.terms.map((x) => `<dt><span class="nl">${esc(x[0])}</span> ${say(x[0])}</dt><dd>${esc(x[1])}</dd>`).join("")}</dl></div>` : ""}
+      <div class="toc small">바로 가기:
+        ${t.foods ? `<a href="#" data-jump="ph-foods">식료품 이름</a> ·` : ""}
+        ${(t.sections || []).map((s, i) => `<a href="#" data-jump="ph-s${i}">${esc(s.title)}</a>`).join(" · ")}
+        · <a href="#" data-jump="ph-dlg">대화 예시</a> · <a href="#" data-jump="ph-quiz">연습 문제</a></div>
+
+      ${t.foods ? `<div class="groupbox" id="ph-foods"><span class="legend">식료품 이름 (${t.foods.length})</span>
+        <p class="small">이름 앞 <span class="art-de">de</span> / <span class="art-het">het</span>도 같이 외워요. 마트에서는 <b>여러 개</b> 모양(복수형)도 자주 써요.</p>
+        ${foodCats.map((c) => `<h3 class="cat-h">${esc(c)}</h3><div class="vis-pics">${t.foods.filter((f) => f.cat === c).map(foodCard).join("")}</div>`).join("")}
+      </div>` : ""}
+
+      ${(t.sections || []).map((s, i) => `<div class="groupbox" id="ph-s${i}"><span class="legend">${esc(s.title)}</span>
+        <div class="ph-list">${(s.items || []).map((it) => `
+          <div class="ph-row">${say(it.nl)}<div class="ph-text"><div class="nl ph-nl">${fmt(it.nl)}</div>
+            <div class="ph-ko">${esc(it.ko)}</div>
+            ${it.alt ? `<div class="small">이렇게도 말해요: <span class="nl">${esc(it.alt)}</span> ${say(it.alt)}</div>` : ""}
+            ${it.note ? `<div class="small muted">💡 ${esc(it.note)}</div>` : ""}</div></div>`).join("")}</div>
+      </div>`).join("")}
+
+      <div class="groupbox" id="ph-dlg"><span class="legend">대화 예시</span>
+        ${(t.dialogs || []).map((d) => `<div class="dlg-box"><div class="dlg-title">${esc(d.title)}</div>
+          ${d.lines.map((l) => { const me = l.who === "ouder" || l.who === "klant"; return `
+            <div class="chat ${me ? "me" : "you"}"><div class="who">${me ? "나" : (l.who === "juf" ? "선생님" : "점원")}</div>
+              <div class="chat-b"><span class="nl">${fmt(l.nl)}</span> ${say(l.nl)}<div class="small">${esc(l.ko)}</div></div></div>`; }).join("")}
+        </div>`).join("")}
+      </div>
+
+      ${t.tip ? `<div class="tip">${sprite("star", "ico")} ${esc(t.tip)}</div>` : ""}
+
+      <div class="groupbox" id="ph-quiz"><span class="legend">연습 문제 (채점)</span>
+        <div class="set-tabs" id="ph-modes">${Object.keys(MODES).map((m) => {
+          const b = bests[arg + "-" + m];
+          return `<button class="btn" data-m="${m}">${esc(MODES[m])}${b ? ` <span class="small">(${b.ok}/${b.total})</span>` : ""}</button>`; }).join("")}</div>
+        <div id="ph-q"></div>
+      </div>`;
+    Pixel.hydrate(view());
+    $$("[data-jump]").forEach((a) => (a.onclick = (e) => { e.preventDefault(); const el = $("#" + a.dataset.jump); if (el) el.scrollIntoView({ behavior: "smooth" }); }));
+
+    const others = (it, key) => shuffle(items.filter((x) => x[key] !== it[key])).slice(0, 3).map((x) => x[key]);
+    function mcOf(correct, wrongs) {
+      const opts = shuffle([correct].concat(wrongs));
+      return { opts, a: opts.indexOf(correct) };
+    }
+    function gapOf(it) {
+      const raw = strip(it.nl);
+      const marked = (it.nl.match(/\*([^*]+)\*/) || [])[1];
+      const words = raw.split(/\s+/).map((w) => w.replace(/[.,!?¿]+$/g, "").replace(/^[¿¡]/, ""));
+      const cands = words.filter((w) => w.length >= 4 && !/^(alstublieft|alsjeblieft)$/i.test(w));
+      const word = marked && marked.indexOf(" ") < 0 ? marked : (cands.sort((a, b) => b.length - a.length)[0] || words[0]);
+      const shown = raw.replace(new RegExp("(^|[^\\p{L}])" + word.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + "(?![\\p{L}])", "u"), "$1_____");
+      return { kind: "fill", q: `${esc(it.ko)}<div class="nl q-sent">${esc(shown)}</div>`, a: [word],
+        hint: word[0] + "… (" + word.length + "글자)", ex: `<span class="nl">${esc(raw)}</span> ${say(raw)}` };
+    }
+    function build(m) {
+      const pool = shuffle(m === "food" ? t.foods : items).slice(0, 10);
+      return pool.map((it) => {
+        if (m === "listen") {
+          const o = mcOf(it.ko, others(it, "ko"));
+          return { kind: "mc", q: `${say(it.nl)} 잘 듣고 뜻을 골라요. <span class="small muted">(${esc(it.sec)})</span>`, opts: o.opts, a: o.a, ex: `<span class="nl">${esc(strip(it.nl))}</span>` };
+        }
+        if (m === "pick") {
+          const o = mcOf(strip(it.nl), others(it, "nl").map(strip));
+          return { kind: "mc", q: `"${esc(it.ko)}" 를 네덜란드어로 하면?`, opts: o.opts, a: o.a, ex: it.note ? esc(it.note) : "" };
+        }
+        if (m === "gap") return gapOf(it);
+        const ans = [it.art + " " + it.nl];
+        if (it.alt) ans.push(it.art + " " + it.alt);
+        return { kind: "fill", q: `${foodPic(it) ? sprite(foodPic(it), "pic-s") : ""} <b>${esc(it.ko)}</b> — de/het까지 써요`,
+          a: ans, hint: "de ... / het ...",
+          ex: `${it.pl && it.pl !== "-" ? `여러 개: <span class="nl">${esc(it.pl)}</span>` : ""} ${say(it.art + " " + it.nl)}` };
+      });
+    }
+    function run(m) {
+      $$("#ph-modes .btn").forEach((b) => b.classList.toggle("active", b.dataset.m === m));
+      Quiz($("#ph-q"), build(m), {
+        src: t.ko + " · " + MODES[m],
+        regen: () => build(m),
+        onScore(ok, total) {
+          const all = store.get("leven-best", {});
+          const k = arg + "-" + m;
+          if (!all[k] || all[k].ok < ok) { all[k] = { ok, total }; store.set("leven-best", all); }
+        }
+      });
+    }
+    $$("#ph-modes .btn").forEach((b) => (b.onclick = () => run(b.dataset.m)));
+    run("listen");
+  };
+
+  /* =======================================================
+     로그인 · 피드백 · 관리자  (js/cloud.js)
+     ======================================================= */
+  const Cloud = () => window.WafelCloud;
+
+  function modal(title, html, mount) {
+    const d = document.createElement("div");
+    d.className = "dialog-backdrop";
+    d.innerHTML = `<div class="window dialog wide" role="dialog" aria-label="${esc(title)}">
+      <div class="titlebar"><span class="title-text">${esc(title)}</span><span class="tb-btns"><button class="tb-btn" data-x aria-label="닫기">×</button></span></div>
+      <div class="form-body">${html}</div></div>`;
+    document.body.appendChild(d);
+    const close = () => d.remove();
+    $$("[data-x]", d).forEach((b) => (b.onclick = close));
+    d.addEventListener("click", (e) => { if (e.target === d) close(); });
+    d.addEventListener("keydown", (e) => { if (e.key === "Escape") close(); });
+    Pixel.hydrate(d);
+    if (mount) mount(d, close);
+    const f = $("input, textarea", d); if (f) f.focus();
+    return d;
+  }
+  const notReady = `<div class="dlg-body">${sprite("warn")}<div><b>아직 준비 중이에요.</b><br>
+    <span class="small">지금은 학습 기록이 <b>이 기기(브라우저)</b>에 저장돼요. 로그인과 피드백은 곧 열려요!</span></div></div>`;
+
+  const SYNC_TEXT = { off: "이 기기에만 저장", loading: "연결 중…", out: "로그인하면 어디서나 이어서 공부해요",
+    syncing: "저장 중…", saved: "모든 기기에 저장됨", error: "저장 실패 (인터넷 확인)" };
+
+  function accountDialog() {
+    const C = Cloud();
+    if (!C || !C.configured) { modal("Login", notReady); return; }
+    const u = C.user;
+    if (u) {
+      modal("Mijn account", `
+        <div class="dlg-body">${sprite("user")}<div><b>안녕하세요, ${esc(u.displayName || (u.email || "").split("@")[0])}님!</b><br>
+          <span class="small">${esc(u.email || "")}</span><br>
+          <span class="small">학습 기록: <b id="acc-sync">${esc(SYNC_TEXT[C.state] || "")}</b></span></div></div>
+        <p class="small">레슨 점수, 단어 트레이너 진도, 오답노트, de/het 기록이 계정에 저장돼요. 다른 기기에서 같은 계정으로 로그인하면 이어서 할 수 있어요.</p>
+        ${C.isAdmin ? `<p><a class="btn" href="#admin" data-x>${sprite("mail", "ico")} 받은 피드백 보기 ${C.unread ? `(새 글 ${C.unread})` : ""}</a></p>` : ""}
+        <div class="dlg-actions"><button class="btn" id="acc-sync-now">지금 동기화</button> <button class="btn" id="acc-out">로그아웃</button> <button class="btn" data-x>닫기</button></div>`,
+        (d, close) => {
+          $("#acc-sync-now", d).onclick = () => { $("#acc-sync", d).textContent = "저장 중…"; C.syncNow().then(() => { $("#acc-sync", d).textContent = SYNC_TEXT[C.state]; }); };
+          $("#acc-out", d).onclick = () => { C.signOut().then(close); };
+        });
+      return;
+    }
+    modal("Login", `
+      <div class="mascot small-m">${sprite("waffleFace")}<div class="bubble">로그인하면 공부한 기록이 저장돼서, <b>휴대폰·컴퓨터 어디서나</b> 이어서 공부할 수 있어요. (로그인 안 해도 이 기기에서는 그대로 쓸 수 있어요.)</div></div>
+      <button class="btn big google" id="lg-google"><span class="g">G</span> Google 계정으로 로그인</button>
+      <div class="or"><span>또는 이메일로</span></div>
+      <label class="fld">이메일<input type="email" id="lg-email" autocomplete="email" placeholder="me@example.com"></label>
+      <label class="fld">비밀번호 <span class="small muted">(6글자 이상)</span><input type="password" id="lg-pw" autocomplete="current-password"></label>
+      <label class="fld" id="lg-name-row" hidden>이름 (선택)<input type="text" id="lg-name" autocomplete="nickname" maxlength="30"></label>
+      <div class="form-msg" id="lg-msg" role="status"></div>
+      <div class="dlg-actions"><button class="btn primary" id="lg-in">로그인</button> <button class="btn" id="lg-up">새로 가입</button> <button class="btn" id="lg-reset">비밀번호 찾기</button></div>`,
+      (d, close) => {
+        const msg = (t, ok) => { const m = $("#lg-msg", d); m.textContent = t; m.className = "form-msg " + (ok ? "ok" : "bad"); };
+        const val = (id) => $(id, d).value.trim();
+        const done = () => { close(); };
+        const fail = (e) => msg(C.message(e));
+        $("#lg-google", d).onclick = () => { msg("로그인 창을 여는 중…", true); C.signInGoogle().then(done, fail); };
+        $("#lg-in", d).onclick = () => C.signInEmail(val("#lg-email"), $("#lg-pw", d).value).then(done, fail);
+        $("#lg-up", d).onclick = () => {
+          const row = $("#lg-name-row", d);
+          if (row.hidden) { row.hidden = false; msg("이름을 적고 한 번 더 '새로 가입'을 눌러 주세요. (이름은 비워도 돼요)", true); return; }
+          C.signUpEmail(val("#lg-email"), $("#lg-pw", d).value, val("#lg-name")).then(done, fail);
+        };
+        $("#lg-reset", d).onclick = () => {
+          if (!val("#lg-email")) { msg("이메일을 먼저 적어 주세요."); return; }
+          C.resetPassword(val("#lg-email")).then(() => msg("비밀번호를 다시 만드는 메일을 보냈어요. 메일함을 확인해 주세요.", true), fail);
+        };
+        $("#lg-pw", d).addEventListener("keydown", (e) => { if (e.key === "Enter") $("#lg-in", d).click(); });
+      });
+  }
+
+  let lastFeedback = 0;
+  function feedbackDialog() {
+    const C = Cloud();
+    if (!C || !C.configured) { modal("Feedback", notReady); return; }
+    modal("Feedback", `
+      <div class="mascot small-m">${sprite("waffleFace")}<div class="bubble">불편한 점, 틀린 네덜란드어, 있었으면 하는 기능… 무엇이든 알려 주세요! 글은 <b>관리자에게만</b> 전달돼요.</div></div>
+      <label class="fld">제목<input type="text" id="fb-title" maxlength="100" placeholder="예: 3과 문제 7번 정답이 이상해요"></label>
+      <label class="fld">내용<textarea id="fb-body" rows="7" maxlength="3000" placeholder="자세히 적어 주시면 고치기 쉬워요."></textarea></label>
+      <div class="small muted">${C.user ? `보내는 사람: ${esc(C.user.email || C.user.displayName || "")} (로그인 계정)` : "로그인하지 않았어요. 답장이 필요하면 내용에 연락처를 적어 주세요."}</div>
+      <div class="form-msg" id="fb-msg" role="status"></div>
+      <div class="dlg-actions"><button class="btn primary" id="fb-send">${sprite("mail", "ico")} 보내기</button> <button class="btn" data-x>취소</button></div>`,
+      (d, close) => {
+        const msg = (t, ok) => { const m = $("#fb-msg", d); m.textContent = t; m.className = "form-msg " + (ok ? "ok" : "bad"); };
+        $("#fb-send", d).onclick = () => {
+          const title = $("#fb-title", d).value.trim(), body = $("#fb-body", d).value.trim();
+          if (!title) { msg("제목을 적어 주세요."); return; }
+          if (!body) { msg("내용을 적어 주세요."); return; }
+          if (Date.now() - lastFeedback < 30000) { msg("조금 전에 보냈어요. 30초 뒤에 다시 보내 주세요."); return; }
+          $("#fb-send", d).disabled = true; msg("보내는 중…", true);
+          C.sendFeedback(title, body).then(() => {
+            lastFeedback = Date.now();
+            $(".form-body", d).innerHTML = `<div class="dlg-body">${sprite("check")}<div><b>Bedankt! 고마워요.</b><br><span class="small">피드백이 관리자에게 전달됐어요.</span></div></div>
+              <div class="dlg-actions"><button class="btn" data-x>닫기</button></div>`;
+            Pixel.hydrate(d); $$("[data-x]", d).forEach((b) => (b.onclick = close));
+          }, (e) => { $("#fb-send", d).disabled = false; msg(C.message(e)); });
+        };
+      });
+  }
+
+  pages.admin = function () {
+    const C = Cloud();
+    view().innerHTML = `${head("mail", "Feedback inbox", "받은 피드백 (관리자 전용)")}<div id="adm">불러오는 중…</div>`;
+    Pixel.hydrate(view());
+    const box = $("#adm");
+    if (!C || !C.configured) { box.innerHTML = notReady; Pixel.hydrate(box); return; }
+    C.ready.then(() => {
+      if (!C.user) { box.innerHTML = `<p>관리자 계정으로 로그인해 주세요.</p><button class="btn" id="adm-login">로그인</button>`; $("#adm-login").onclick = accountDialog; return; }
+      C.listFeedback().then((list) => {
+        const fmtDate = (x) => (x.createdAt && x.createdAt.toDate ? x.createdAt.toDate().toLocaleString("ko-KR") : "");
+        box.innerHTML = `<p class="small">모두 ${list.length}개 · 안 읽음 ${list.filter((x) => !x.read).length}개</p>` + (list.length ? list.map((x) => `
+          <div class="fb-item ${x.read ? "read" : "new"}" data-id="${esc(x.id)}">
+            <div class="fb-head"><b>${x.read ? "" : "● "}${esc(x.title)}</b><span class="small muted">${esc(fmtDate(x))}</span></div>
+            <div class="fb-body">${esc(x.body)}</div>
+            <div class="small muted">보낸 사람: ${esc(x.name || "")} ${esc(x.email || (x.uid ? "" : "익명"))} · 페이지: ${esc(x.page || "")}</div>
+            <div class="fb-act"><button class="btn" data-read="${x.read ? 0 : 1}">${x.read ? "안 읽음으로" : "읽음으로"}</button> <button class="btn" data-del>삭제</button></div>
+          </div>`).join("") : `<p class="muted">아직 받은 피드백이 없어요.</p>`);
+        $$(".fb-item", box).forEach((el) => {
+          const id = el.dataset.id;
+          $("[data-read]", el).onclick = (e) => C.markFeedback(id, e.target.dataset.read === "1").then(pages.admin);
+          $("[data-del]", el).onclick = () => { if (confirm("이 피드백을 지울까요?")) C.deleteFeedback(id).then(pages.admin); };
+        });
+      }, (e) => {
+        box.innerHTML = `<div class="dlg-body">${sprite("warn")}<div><b>관리자만 볼 수 있어요.</b><br><span class="small">${esc(C.message(e))}</span></div></div>`;
+        Pixel.hydrate(box);
+      });
+    });
+  };
+
+  function paintAccount() {
+    const C = Cloud();
+    const b = $("#btn-login"); if (!b) return;
+    const u = C && C.user;
+    const name = u ? (u.displayName || (u.email || "").split("@")[0] || "Account") : "Login";
+    $(".lbl", b).textContent = name.length > 8 ? name.slice(0, 7) + "…" : name;
+    b.classList.toggle("on", !!u);
+    b.title = u ? "내 계정 · " + (SYNC_TEXT[C.state] || "") : "로그인하고 학습 기록 저장하기";
+    const st = $("#st-sync");
+    if (st) st.textContent = C ? (u ? "☁ " : "") + (SYNC_TEXT[C.state] || "") + (C.isAdmin && C.unread ? ` · 새 피드백 ${C.unread}` : "") : "";
+  }
+
   /* ---------------- ABOUT ---------------- */
   pages.over = function () {
     view().innerHTML = `
@@ -1346,7 +1624,10 @@
           <li><b>Woordenlijst</b>: Perfectum 동사 ${VERBS.length}개 (학습자료 PDF)</li>
           <li><b>de/het</b>: 명사 ${NOUNS.length}개로 관사·복수형 연습</li>
           <li><b>Tijdmachine</b>: 동사를 현재 / 단순과거 / 현재완료 / 미래로 변환</li>
-          <li><b>Foutenboek</b>: 틀린 문제 자동 저장 (이 브라우저의 localStorage)</li>
+          <li><b>Foutenboek</b>: 틀린 문제 자동 저장</li>
+          <li><b>Praktisch</b>: 학교(학부모-선생님) · 마트 장보기 실생활 표현</li>
+          <li><b>Login</b>: 구글 또는 이메일로 로그인하면 학습 기록이 계정에 저장돼요</li>
+          <li><b>Feedback</b>: 툴바의 Feedback 버튼으로 의견을 보내 주세요 (관리자에게만 전달)</li>
         </ul>
         <p class="small muted">채점은 대소문자, 끝의 마침표, ë 같은 악센트 차이를 너그럽게 봐요. 대신 정확한 철자를 함께 보여줘요.</p>
       </div><div class="hero-art">${sprite("computer", "", "")}<div class="nl" style="font-size:22px">hallo!</div></div></div>`;
@@ -1368,7 +1649,7 @@
      ROUTER + CHROME
      ======================================================= */
   const TITLES = { home: "Home", lessen: "Lessen", les: "Les", oefenen: "Oefenen", woorden: "Woordenlijst",
-    perfectum: "Perfectum Quiz", trainer: "Woordentrainer", tijdmachine: "Tijdmachine", dehet: "de of het?", fouten: "Foutenboek", over: "Over" };
+    perfectum: "Perfectum Quiz", trainer: "Woordentrainer", tijdmachine: "Tijdmachine", dehet: "de of het?", fouten: "Foutenboek", over: "Over", leven: "Praktisch", admin: "Feedback inbox" };
 
   function route() {
     const raw = location.hash.replace(/^#\/?/, "") || "home";
@@ -1439,6 +1720,16 @@
       const b = e.target.closest && e.target.closest("[data-say]");
       if (b) { e.preventDefault(); e.stopPropagation(); speak(b.dataset.say); }
     }, true);
+    if ($("#btn-login")) $("#btn-login").onclick = accountDialog;
+    if ($("#btn-feedback")) $("#btn-feedback").onclick = feedbackDialog;
+    if (window.WafelCloud) WafelCloud.onChange(paintAccount);
+    paintAccount();
+    // 다른 기기의 기록을 받아오면 지금 화면을 새로 그려요 (입력 중인 문제는 그대로 둠)
+    window.addEventListener("wafel:synced", () => {
+      updateBadge();
+      const busy = $("#page input:not([disabled]):not([type=radio]):not([type=checkbox])") && $("#page input:focus");
+      if (!busy) route();
+    });
     window.addEventListener("hashchange", route);
     route();
   }

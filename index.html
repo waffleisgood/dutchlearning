@@ -45,7 +45,10 @@
           <a class="tool" href="#tijdmachine" data-route="tijdmachine"><img data-sprite="clock" alt="">Tijd</a>
           <a class="tool" href="#trainer" data-route="trainer"><img data-sprite="star" alt="">Trainer</a>
           <a class="tool" href="#perfectum" data-route="perfectum"><img data-sprite="trophy" alt="">Quiz</a>
+          <a class="tool" href="#leven" data-route="leven"><img data-sprite="winkelkar" alt="">Praktisch</a>
           <a class="tool" href="#fouten" data-route="fouten"><img data-sprite="floppy" alt="">Fouten</a>
+          <button class="tool" id="btn-feedback" title="의견 보내기"><img data-sprite="mail" alt="">Feedback</button>
+          <button class="tool" id="btn-login"><img data-sprite="user" alt=""><span class="lbl">Login</span></button>
         </div>
         <div class="throbber" title="Wafel Navigator"><img data-sprite="waffle" alt=""></div>
       </div>
@@ -58,6 +61,7 @@
       <div class="dirbar">
         <a class="btn" href="#home">What's New!</a>
         <a class="btn" href="#oefenen">What's Cool!</a>
+        <a class="btn" href="#leven">Praktisch</a>
         <a class="btn" href="#lessen">Handbook</a>
         <a class="btn" href="#woorden">Net Search</a>
         <a class="btn" href="#over">Net Directory</a>
@@ -71,6 +75,7 @@
       <!-- status bar -->
       <div class="statusbar">
         <div class="st-main" id="status">Document: Done</div>
+        <div class="st-extra" id="st-sync"></div>
         <div class="st-extra">NL ⇄ KO</div>
         <div id="clock">--:--</div>
       </div>
@@ -85,7 +90,10 @@
   <script src="js/grammar-b.js"></script>
   <script src="js/sentences-1.js"></script>
   <script src="js/sentences-2.js"></script>
+  <script src="js/data-phrases.js"></script>
   <script src="js/audio-manifest.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/cloud.js"></script>
   <script src="js/app.js"></script>
 </body>
 </html>
