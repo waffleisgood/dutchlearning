@@ -1506,11 +1506,17 @@
           <span class="small">${esc(u.email || "")}</span><br>
           <span class="small">학습 기록: <b id="acc-sync">${esc(SYNC_TEXT[C.state] || "")}</b></span></div></div>
         <p class="small">레슨 점수, 단어 트레이너 진도, 오답노트, de/het 기록이 계정에 저장돼요. 다른 기기에서 같은 계정으로 로그인하면 이어서 할 수 있어요.</p>
-        ${C.isAdmin ? `<p><a class="btn" href="#admin" data-x>${sprite("mail", "ico")} 받은 피드백 보기 ${C.unread ? `(새 글 ${C.unread})` : ""}</a></p>` : ""}
+        <p id="acc-admin"></p>
         <div class="dlg-actions"><button class="btn" id="acc-sync-now">지금 동기화</button> <button class="btn" id="acc-out">로그아웃</button> <button class="btn" data-x>닫기</button></div>`,
         (d, close) => {
           $("#acc-sync-now", d).onclick = () => { $("#acc-sync", d).textContent = "저장 중…"; C.syncNow().then(() => { $("#acc-sync", d).textContent = SYNC_TEXT[C.state]; }); };
           $("#acc-out", d).onclick = () => { C.signOut().then(close); };
+          const paintAdmin = () => {
+            const el = $("#acc-admin", d); if (!el) return;
+            el.innerHTML = C.isAdmin ? `<a class="btn" href="#admin">${sprite("mail", "ico")} 받은 피드백 보기 ${C.unread ? `(새 글 ${C.unread})` : ""}</a>` : "";
+            Pixel.hydrate(el); const a = $("a", el); if (a) a.onclick = close;
+          };
+          paintAdmin(); C.onChange(paintAdmin);
         });
       return;
     }
